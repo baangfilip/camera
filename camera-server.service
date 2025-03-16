@@ -1,0 +1,14 @@
+[Unit]
+Description=Camera server service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=camerauser
+ExecStart=python3 /opt/camera-server.py
+
+[Install]
+WantedBy=multi-user.target
