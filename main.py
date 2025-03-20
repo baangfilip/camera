@@ -9,20 +9,13 @@ import io
 import socket
 import cv2
 from datetime import datetime
+from gpiozero import LED
+from time import sleep
+
+led = LED(23)
 
 PORT = 8443
 
-PAGE = """\
-<html>
-<head>
-<title>Baby camera</title>
-</head>
-<body>
-<h1>Baby camera</h1>
-<img src="stream.mjpg" width="1920" height="1080" />
-</body>
-</html>
-"""
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
@@ -40,15 +33,26 @@ class VideoStreamHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(301)
             self.send_header('Location', '/index.html')
             self.end_headers()
-        elif self.path == '/index.html':
-            content = PAGE.encode('utf-8')
+        elif self.path == '/ledon':
+            led.on()
             self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.send_header('Content-Length', len(content))
             self.end_headers()
-            self.wfile.write(content)
+            self.wfile.write(b'ok\r\n')
+        elif self.path == '/ledoff':
+            led.off()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'ok\r\n')
+        elif self.path == '/temp':
+            with open('/sys/class/thermal/thermal_zone0/temp', 'rb') as f: 
+                temp = f.read()
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/plain')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(temp) 
+            self.wfile.write(b'\r\n')
         elif self.path == '/stream.mjpg':
-
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
@@ -69,8 +73,28 @@ class VideoStreamHandler(http.server.BaseHTTPRequestHandler):
             except Exception as e:
                 print("Stream stopped:", e)
         else:
-            self.send_error(404)
-            self.end_headers()
+            print("path: ", self.path)
+            try:
+                with open('/opt/public/'+self.path, 'rb') as f:
+                    data = f.read()
+                self.send_response(200)
+                if self.path.endswith('js'): 
+                    self.send_header('Content-Type', 'text/javascript')
+                    self.send_header('Content-Length', len(data))
+                self.end_headers()
+                self.wfile.write(data)
+            except FileNotFoundError:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b'404 not found')
+            except PermissionError:
+                self.send_response(403)
+                self.end_headers()
+                self.wfile.write(b'403 no permission')
+            except Exception:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(b'500 error')
 
 def apply_timestamp(request):
     timestamp = datetime.utcnow().strftime('%F %T.%f')[:-3]
@@ -108,8 +132,12 @@ try:
         httpd.socket = ssl.wrap_socket (httpd.socket, 
             keyfile="/opt/key.pem", 
             certfile='/opt/cert.pem', server_side=True)
-
+        
+        #flash light to confirm server about the be started
+        led.on()
+        sleep(1)
+        led.off()
         httpd.serve_forever()
+
 finally:
     picam2.stop_recording()
-
