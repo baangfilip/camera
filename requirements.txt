@@ -1,0 +1,4 @@
+colorzero==2.0
+gpiozero==2.0.1
+numpy==2.2.4
+opencv-python==4.11.0.86
