@@ -25,6 +25,12 @@ then start it, and enable it
 sudo openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes -subj "/C=XX/ST=StateName/L=CityName/O=CompanyName/OU=CompanySectionName/CN=192.168.1.*"
 
 # Images
+## Cad case cross section
+![case inside](./readme-media/cross-section-cad.png)
+
+## Cad case 
+![case inside](./readme-media/case-cad.png)
+
 ## Case outside
 ![case outside](./readme-media/case.png)
 
