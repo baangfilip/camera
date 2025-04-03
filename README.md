@@ -1,5 +1,6 @@
 # Python web server for handling pi camera on rpi zero 2w
 Not using another software because of performance.
+Also not to using any django or flask for web backend to keep the size down.
 
 ## install 
 sudo apt install python3-picamera2 --no-install-recommends
