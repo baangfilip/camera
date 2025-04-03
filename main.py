@@ -6,6 +6,7 @@ from httpHandler import HttpRequestHandler
 import argparse
 from time import sleep
 from hardwareLogic import led_on, led_off
+from cameraLogic import picam2
 
 local_ip = "0.0.0.0"
 
@@ -55,5 +56,5 @@ try:
         httpd.serve_forever()    
         
 finally:
-    # picam2.stop_recording()
+    picam2.stop_recording()
     print("finally")
