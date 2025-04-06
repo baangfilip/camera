@@ -26,17 +26,20 @@ then start it, and enable it
 sudo openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes -subj "/C=XX/ST=StateName/L=CityName/O=CompanyName/OU=CompanySectionName/CN=192.168.1.*"
 
 # Images
+## Webb
+<img alt="webb" src="./readme-media/webb.png" width=300/>
+
 ## Cad case cross section
-![case inside](./readme-media/cross-section-cad.png)
+<img alt="Cad case cross section" src="./readme-media/cross-section-cad.png" width=300/>
 
 ## Cad case 
-![case inside](./readme-media/case-cad.png)
+<img alt="Cad case" src="./readme-media/case-cad.png" width=300/>
 
 ## Case outside
-![case outside](./readme-media/case.png)
+<img alt="Case outside" src="./readme-media/case.png" width=300/>
 
 ## Case inside
-![case inside](./readme-media/in-case.png)
+<img alt="Case inside" src="./readme-media/in-case.png" width=300/>
 
 # Development
 Create env example: `python -m venv .venv`, activate it `source .venv/bin/activate` install from requirements.txt `pip install -r requirements.txt`
